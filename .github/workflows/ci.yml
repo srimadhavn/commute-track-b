@@ -1,0 +1,66 @@
+
+name: Commute Planner CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    name: Test and Build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: commute
+          POSTGRES_PASSWORD: commute_test_password
+          POSTGRES_DB: commute
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U commute -d commute"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+        env:
+          TEST_PG: "1"
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: commute
+          PGPASSWORD: commute_test_password
+          PGDATABASE: commute
+
+      - name: Build API Docker image
+        run: |
+          docker build \
+            -f services/api/Dockerfile \
+            -t commute-api:ci .
+
+      - name: Build Ingestor Docker image
+        run: |
+          docker build \
+            -f services/ingestor/Dockerfile \
+            -t commute-ingestor:ci .
