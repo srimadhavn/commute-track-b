@@ -50,7 +50,7 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Run tests
         run: npm test
@@ -82,7 +82,7 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Trivy scan Ingestor image
         uses: aquasecurity/trivy-action@v0.36.0
@@ -92,4 +92,4 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
