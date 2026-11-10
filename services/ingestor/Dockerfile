@@ -1,6 +1,6 @@
 
 # Stage 1: Build
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 
 ENV NODE_ENV=production
 WORKDIR /app
@@ -15,7 +15,7 @@ RUN npm ci --omit=dev --workspace services/ingestor
 COPY services/ingestor services/ingestor
 
 # Stage 2: Runtime
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 
 ENV NODE_ENV=production
 WORKDIR /app
