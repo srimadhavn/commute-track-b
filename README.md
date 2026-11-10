@@ -66,3 +66,32 @@ docker compose down -v
 - **/health** returns 200 with `status: ok | stale | empty` while the DB is reachable, and 503 only if the DB is down.
 - **/stations** `station_count` is the total in the DB, regardless of `limit`.
 - Logs are one JSON object per line (ready for Loki in B2).
+
+
+## Development Workflow
+
+This project follows a branch-based Git workflow.
+
+- `main` contains stable, verified code.
+- All development happens on short-lived feature branches.
+- Changes are committed using Conventional Commits.
+- Every change is submitted through a GitHub Pull Request.
+- CI checks must pass before changes are merged into `main`.
+
+### Local Development
+
+```bash
+git switch main
+git pull origin main
+git switch -c docs/your-change
+```
+
+After making changes:
+
+```bash
+git add .
+git commit -m "docs: describe your change"
+git push -u origin docs/your-change
+```
+
+Open a Pull Request on GitHub and merge after the required checks pass.
