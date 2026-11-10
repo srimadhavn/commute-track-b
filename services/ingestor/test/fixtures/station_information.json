@@ -1,0 +1,7 @@
+{"last_updated":1789047500,"ttl":60,"version":"2.3","data":{"stations":[
+ {"station_id":"a1","name":"Broadway & W 24 St","lat":40.742354,"lon":-73.989151,"capacity":40},
+ {"station_id":"a2","name":"W 52 St & 11 Ave","lat":40.767272,"lon":-73.993929,"capacity":55},
+ {"station_id":"a3","name":"Bad Coords","lat":0,"lon":0,"capacity":10},
+ {"station_id":"a4","name":"No Status Yet","lat":40.7,"lon":-74.0,"capacity":12},
+ {"station_id":"","name":"No Id","lat":40.7,"lon":-74.0}
+]}}

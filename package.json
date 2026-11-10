@@ -1,0 +1,9 @@
+{
+  "name": "commute-track-b",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "services/*"],
+  "scripts": {
+    "test": "npm test --workspaces --if-present"
+  }
+}

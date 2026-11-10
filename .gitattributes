@@ -1,0 +1,2 @@
+# Keep LF endings even when checked out on Windows (matters for anything run inside Linux containers).
+* text=auto eol=lf

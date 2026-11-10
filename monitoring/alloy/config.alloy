@@ -1,0 +1,63 @@
+// Grafana Alloy: the log collector (it replaces Promtail, which reached end-of-life on 2026-03-02).
+// Flow: Docker -> find this project's containers -> read their logs -> label them -> send to Loki.
+
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+// 1. Ask Docker which containers exist.
+discovery.docker "compose" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "10s"
+}
+
+// 2. Keep only this Compose project, and label each log line with its Compose service name
+//    (api, ingestor, db, prometheus, grafana, loki, alloy).
+discovery.relabel "compose" {
+  targets = discovery.docker.compose.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    regex         = "commute-track-b"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+// 3. Read the logs of those containers.
+loki.source.docker "compose" {
+  host             = "unix:///var/run/docker.sock"
+  targets          = discovery.relabel.compose.output
+  refresh_interval = "10s"
+  forward_to       = [loki.process.app.receiver]
+}
+
+// 4. Our two services log one JSON object per line. Parse those and turn "level" into a label
+//    (error / warn / info) so it can be filtered quickly. Other services (db, grafana...) pass through as-is.
+loki.process "app" {
+  stage.match {
+    selector = "{service=~\"api|ingestor\"}"
+
+    stage.json {
+      expressions = { level = "level" }
+    }
+
+    stage.labels {
+      values = { level = "" }
+    }
+  }
+
+  forward_to = [loki.write.local.receiver]
+}
+
+// 5. Ship everything to Loki.
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

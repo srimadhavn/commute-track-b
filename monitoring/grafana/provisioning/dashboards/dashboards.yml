@@ -1,0 +1,12 @@
+# Tells Grafana to load every .json file in /etc/dashboards.
+# Dashboards are code: edit the JSON in the repo, not in the Grafana UI (UI edits are not saved).
+apiVersion: 1
+providers:
+  - name: commute
+    folder: Commute
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/dashboards
