@@ -50,7 +50,7 @@ jobs:
           scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Run tests
         run: npm test
@@ -73,3 +73,23 @@ jobs:
           docker build \
             -f services/ingestor/Dockerfile \
             -t commute-ingestor:ci .
+
+      - name: Trivy scan API image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: commute-api:ci
+          scan-type: image
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      - name: Trivy scan Ingestor image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: commute-ingestor:ci
+          scan-type: image
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
