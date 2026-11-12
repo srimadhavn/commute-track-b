@@ -1,4 +1,3 @@
-
 FROM node:22-alpine AS build
 
 ENV NODE_ENV=production
@@ -9,9 +8,10 @@ COPY packages/commute-core/package.json packages/commute-core/
 COPY services/api/package.json services/api/
 COPY services/ingestor/package.json services/ingestor/
 
-RUN npm ci --omit=dev --workspace services/ingestor
+RUN npm ci --omit=dev --workspace services/api
 
-COPY services/ingestor services/ingestor
+COPY packages/commute-core packages/commute-core
+COPY services/api services/api
 
 FROM node:22-alpine AS runtime
 
@@ -25,6 +25,6 @@ RUN rm -rf /usr/local/lib/node_modules/npm \
 COPY --from=build --chown=node:node /app /app
 
 USER node
-EXPOSE 9101
+EXPOSE 3000
 
-CMD ["node", "services/ingestor/src/index.mjs"]
+CMD ["node", "services/api/src/index.mjs"]

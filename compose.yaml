@@ -132,7 +132,8 @@ services:
     restart: unless-stopped
     user: "0:0"             # needed to read the Docker socket (see the security note in README)
     depends_on:
-      loki: { condition: service_healthy }
+      loki: 
+        condition: service_started
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
